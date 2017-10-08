@@ -180,29 +180,6 @@ module half_barrel1(height, r)
 }
 */
 
-/*
-module bracket3(count_x, count_y, count_z, width)
-{
-    difference(){
-        union(){
-            mirror([0,0,1]) rectangular_plate(count_x, count_y, width);
-            translate([(count_x-0.5)*width, 0, 0.5*width]) rotate([0,-90,0]) mirror([0,0,1]) rectangular_plate(count_z, count_y, width);
-            translate([(count_x-0.25)*width-0.5, -0.5*width, -0.25*width+0.5]) rotate([0,-90,0]) cube([width/4, width*count_y, width/4]);
-            translate([-0.5*width, 0, (count_z-0.5)*width]) rotate([0,90,0]) mirror([0,0,1]) rectangular_plate(count_z, count_y, width);
-            translate([-0.5*width+0.5, -0.5*width, -0.25*width+0.5]) rotate([0,-90,0]) cube([width/4, width*count_y, width/4]);
-        }
-        
-        union(){
-            for (i = [0:1:(count_y-1)] ) {
-                translate ([-width/2, width*i ,width/2]) rotate([0,90,0]) m4_square_nut_shell_inflated();
-            }
-            for (i = [0:1:(count_y-1)] ) {
-                translate ([(count_x-0.5)*width, width*i ,width/2]) rotate([0,90,0]) m4_square_nut_shell_inflated();
-            }
-        }
-    }
-}
-*/
 module bracket3(count_x, count_y, count_z, width)
 {
     difference(){
@@ -222,6 +199,7 @@ module bracket3(count_x, count_y, count_z, width)
     }
 }
 
+/*
 module bracket4(count_x, count_y, count_z, width)
 {
     difference(){
@@ -243,6 +221,26 @@ module bracket4(count_x, count_y, count_z, width)
         }
     }
 }
+*/
+module bracket4(count_x, count_y, count_z, width)
+{
+    difference(){
+    
+    union(){
+        rectangular_plate_plus(count_x, count_y, width);
+        translate([(count_x-0.5)*width-thickness_total, 0, 0.5*width]) rotate([0,-90,0]) mirror([0,0,1])rectangular_plate_plus(count_z, count_y, width);
+        translate([-0.5*width+thickness_total, 0, (count_z-0.5)*width]) rotate([0,90,0]) mirror([0,0,1])rectangular_plate_plus(count_z, count_y, width);
+    }
+    
+    union(){
+        rectangular_plate_minus(count_x, count_y, width);
+        translate([(count_x-0.5)*width-thickness_total, 0, 0.5*width]) rotate([0,-90,0]) mirror([0,0,1])rectangular_plate_minus(count_z, count_y, width);
+        translate([-0.5*width+thickness_total, 0, (count_z-0.5)*width]) rotate([0,90,0]) mirror([0,0,1])rectangular_plate_minus(count_z, count_y, width);
+    }
+    
+    }
+}
+
 /*
 module corner_in_in(count_x, count_y, count_z, width){
      for (k = [0:1:(count_z-1)])
@@ -261,4 +259,4 @@ module corner_in_in(count_x, count_y, count_z, width){
 //rectangular_plate(1,5,10);
 //half_barrel1(4, 20);
 //translate ([-40,0,0]) mirror([0,0,1]) rectangular_plate(3,4,10);
-bracket3(5,1,2,10);
+bracket4(5,1,2,10);
