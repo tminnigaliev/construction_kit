@@ -1,6 +1,32 @@
 thickness_total = 4;
 thickness_bottom = 1;
 thickness_top = 0;
+
+module wedge_180(h, r, d)
+{
+	rotate(d) difference()
+	{
+		rotate(180-d) difference()
+		{
+			cylinder(h = h, r = r);
+			translate([-(r+1), 0, -1]) cube([r*2+2, r+1, h+2]);
+		}
+		translate([-(r+1), 0, -1]) cube([r*2+2, r+1, h+2]);
+	}
+}
+
+module wedge(h, r, d)
+{
+	if(d <= 180)
+		wedge_180(h, r, d);
+	else
+		rotate(d) difference()
+		{
+			cylinder(h = h, r = r);
+			translate([0, 0, -1]) wedge_180(h+2, r+1, 360-d);
+		}
+}
+
 // http://rcpp-kvalitet.ru/catalog/
 // http://tdm-neva.ru/nuts/din-562-nut.htm
 // http://www.ebay.com/itm/172788788738
@@ -43,6 +69,63 @@ module node(width) {
     difference(){
         node_plus(width);
         node_minus(width);
+    }
+}
+
+/*
+module node_and_node_plus(width, angle)
+{
+    node_plus(width);
+    //translate([0, width, 0]) node_plus(width);    
+}
+
+module node_and_node_minus(width, angle)
+{
+    translate([width/2+0.5,width/2,0.9]) rotate([angle/2,0,0]) rotate([0,-90,0]) wedge(width+1, 2*width, angle);
+    difference(){
+        translate([0,0,-0.05]) scale(1.01) node_and_node_plus(width, angle);
+        translate([-width/2-1,-2, 1.5*width-0.5])rotate([0,90,0]) cylinder(r=1.5*width, h=(width+2),$fn=120);
+    }
+}
+
+module node_and_node(width, angle) {
+    difference(){
+        node_and_node_plus(width, angle);
+        node_and_node_minus(width, angle);    
+    }
+}
+
+module node_and_node_section(width, angle){
+    intersection(){
+        node_and_node(width,angle);
+        translate([-20,0,0]) cube([40,40,40], center=true);
+    }   
+}
+*/
+
+module node_lock90(width)
+{
+    angle=90;
+    difference(){
+        node_plus(width);
+        union(){
+            
+            translate([width/2+0.05,width/2-thickness_total,0.3]) rotate([0,-90,0]) cube([20,15,width/4+0.05]);
+            translate([0,width/2-thickness_total,0.3]) rotate([0,-90,0]) cube([20,15,width/4+0.05]);
+
+            translate([width/4+0.5,width/2-0.3,0.3]) rotate([0,-90,0]) cube([20,15,20]);
+
+            translate([-width/2-1,width/2-2,thickness_total/2])rotate([0,90,0]) cylinder(r=1.75/2, h=width+2, $fn=60);
+        }
+    }
+}
+
+module node_corner90(width)
+{
+    union()
+    {
+        node_lock90(width);
+        translate([0,width,0]) rotate([0,0,180]) node_lock90(width);
     }
 }
 
@@ -133,15 +216,19 @@ module bracket1(count_x, count_y, count_z, width)
     difference(){
     
     union(){
-        rectangular_plate_plus(count_x, count_y, width);
-        translate([(count_x-0.5)*width, 0, 0.5*width]) rotate([0,-90,0]) rectangular_plate_plus(count_z, count_y, width);
-        translate([-0.5*width, 0, (count_z-0.5)*width]) rotate([0,90,0])rectangular_plate_plus(count_z, count_y, width);
+        rectangular_plate_plus(count_x-2, count_y, width);
+        translate([-width,0,0])rotate([0,0,90])node_corner90(width);
+        translate([width*(count_x-2),0,0])rotate([0,0,90])mirror([0,1,0])node_corner90(width);
+
+        translate([-width*(count_x-2),0,0])rectangular_plate_plus(count_z-1, count_y, width);
+        translate([count_x*width,0,0])rectangular_plate_plus(count_z-1, count_y, width);
     }
     
     union(){
-        rectangular_plate_minus(count_x, count_y, width);
-        translate([(count_x-0.5)*width, 0, 0.5*width]) rotate([0,-90,0]) rectangular_plate_minus(count_z, count_y, width);
-        translate([-0.5*width, 0, (count_z-0.5)*width]) rotate([0,90,0])rectangular_plate_minus(count_z, count_y, width);
+        rectangular_plate_minus(count_x-2, count_y, width);
+        translate([-(count_x-2)*width, 0, 0])  rectangular_plate_minus(count_z-1, count_y, width);
+        translate([(count_x)*width, 0, 0])  rectangular_plate_minus(count_z-1, count_y, width);
+        //translate([-0.5*width, 0, (count_z-0.5)*width]) rotate([0,90,0])rectangular_plate_minus(count_z, count_y, width);
     }
     
     }
@@ -312,5 +399,8 @@ module corner_in_in(count_x, count_y, count_z, width){
 //rectangular_plate(1,5,10);
 //half_barrel4(4, 32);
 //translate ([-40,0,0]) mirror([0,0,1]) rectangular_plate(3,4,10);
-//bracket1(5,1,1,10);
-square_nut_holder(10);
+bracket1(5,1,2,10);
+//square_nut_holder(10);
+//node_and_node_section(10, 90);
+//node_lock90(10);
+//node_corner90(10);
