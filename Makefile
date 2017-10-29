@@ -4,7 +4,11 @@ include $(wildcard *.deps)
 STLDIR = stls
 DEPDIR = deps
 
-_TARGETS = sq_nut_holder.stl ring_10_20.stl bracket1_5_2.stl rect_plate_1_5.stl rect_plate_5_10.stl
+_TARGETS = sq_nut_holder.stl \
+           ring_10_20.stl \
+           bracket1_5_2.stl \
+           rect_plate_1_5.stl rect_plate_5_10.stl \
+           rail_8.stl rail_10.stl rail_15.stl rail_19.stl
 
 TARGETS = $(patsubst %,$(STLDIR)/%,$(_TARGETS))
 PNGS = $(TARGETS:.stl=.png)
