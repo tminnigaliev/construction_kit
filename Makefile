@@ -2,22 +2,27 @@
 include $(wildcard *.deps)
 
 STLDIR = stls
+DEPDIR = deps
 
-_TARGETS=kit.stl
+_TARGETS=sq_nut_holder.stl
 
 TARGETS = $(patsubst %,$(STLDIR)/%,$(_TARGETS))
+_DEPS = $(patsubst %,$(DEPDIR)/%,$(_TARGETS))
+DEPS = $(_DEPS:.stl=.deps)
 PNGS = $(TARGETS:.stl=.png)
 
 all: $(TARGETS) $(PNGS)
 
 clean:
-	rm ./stls/*.deps
+	rm ./deps/*.deps
 	rm ./stls/*.stl
 	rm ./stls/*.png
 
 ./stls/%.stl: ./scad/%.scad
-	openscad -m make -o $@ -d $@.deps $<
+	openscad -m make -o $@ -d $(DEPS) $<
+#openscad -m make -o $@ -d $@.deps $<
 
 ./stls/%.png: ./scad/%.scad
-	openscad --render -o $@ -d $@.deps $<
+	openscad --render -o $@ -d $(DEPS) $<
+#	openscad --render -o $@ -d $@.deps $<
 
