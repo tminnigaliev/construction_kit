@@ -220,15 +220,14 @@ module bracket1(count_x, count_y, count_z, width)
         translate([-width,0,0])rotate([0,0,90])node_corner90(width);
         translate([width*(count_x-2),0,0])rotate([0,0,90])mirror([0,1,0])node_corner90(width);
 
-        translate([-width*(count_x-2),0,0])rectangular_plate_plus(count_z-1, count_y, width);
+        translate([-width*(count_x-2+count_z-2),0,0])rectangular_plate_plus(count_z-1, count_y, width);
         translate([count_x*width,0,0])rectangular_plate_plus(count_z-1, count_y, width);
     }
     
     union(){
         rectangular_plate_minus(count_x-2, count_y, width);
-        translate([-(count_x-2)*width, 0, 0])  rectangular_plate_minus(count_z-1, count_y, width);
+        translate([-(count_x-2+count_z-2)*width, 0, 0])  rectangular_plate_minus(count_z-1, count_y, width);
         translate([(count_x)*width, 0, 0])  rectangular_plate_minus(count_z-1, count_y, width);
-        //translate([-0.5*width, 0, (count_z-0.5)*width]) rotate([0,90,0])rectangular_plate_minus(count_z, count_y, width);
     }
     
     }
@@ -239,17 +238,18 @@ module bracket2(count_x, count_y, count_z, width)
     difference(){
     
     union(){
-        translate([0,0,thickness_total])mirror([0,0,1])rectangular_plate_plus(count_x, count_y, width);
-        translate([(count_x-0.5)*width, 0, 0.5*width]) rotate([0,-90,0]) rectangular_plate_plus(count_z, count_y, width);
-        translate([-0.5*width, 0, (count_z-0.5)*width]) rotate([0,90,0])rectangular_plate_plus(count_z, count_y, width);
+        translate([0,0,thickness_total]) mirror([0,0,1]) rectangular_plate_plus(count_x-2, count_y, width);
+        translate([-width,0,0])rotate([0,0,90])node_corner90(width);
+        translate([width*(count_x-2),0,0])rotate([0,0,90])mirror([0,1,0])node_corner90(width);
+
+        translate([-width*(count_x-2+count_z-2),0,0])rectangular_plate_plus(count_z-1, count_y, width);
+        translate([count_x*width,0,0])rectangular_plate_plus(count_z-1, count_y, width);
     }
     
     union(){
-        translate([width,0,thickness_total])mirror([0,0,1])rectangular_plate_minus(count_x-2, count_y, width);
-        rectangular_plate_minus(1, count_y, width);
-        translate([width*(count_x-1),0,0])rectangular_plate_minus(1, count_y, width);
-        translate([(count_x-0.5)*width, 0, 0.5*width]) rotate([0,-90,0]) rectangular_plate_minus(count_z, count_y, width);
-        translate([-0.5*width, 0, (count_z-0.5)*width]) rotate([0,90,0])rectangular_plate_minus(count_z, count_y, width);
+        translate([0,0,thickness_total]) mirror([0,0,1])rectangular_plate_minus(count_x-2, count_y, width);
+        translate([-(count_x-2+count_z-2)*width, 0, 0])  rectangular_plate_minus(count_z-1, count_y, width);
+        translate([(count_x)*width, 0, 0])  rectangular_plate_minus(count_z-1, count_y, width);
     }
     
     }
@@ -301,6 +301,7 @@ module bracket4(count_x, count_y, count_z, width)
     }
 }
 
+/*
 module half_barrel1(n_height, r_mm)
 {
     for (i = [0:1:(n_height-1)] )
@@ -367,6 +368,80 @@ module half_barrel4(n_height, r_mm)
         }
     }
 }
+*/
+module horseshoe(width, r_mm, n_links)
+{
+        step_n = 3.14 * r_mm / 10;
+        step = 3.14 / step_n;
+        for (j = [0:1:(n_links-1)])
+        {
+            alpha_deg = j * step * 180 / 3.14;
+            rotate([0,0,alpha_deg]) translate([0,r_mm,width*i]) rotate([0,0,0])
+           {
+               node_corner90(width);
+               translate([0,20,0])node(width);
+           }
+        }
+}
+
+/*
+ring10_20: 10 mm размер элемента
+           20 элементов по периметру кольца
+*/
+module ring_10_20()
+{
+    horseshoe(10, 31.85, 20);    
+}
+
+module ring_10_18()
+{
+    horseshoe(10, 28.65, 18);    
+}
+
+module ring_10_16()
+{
+    horseshoe(10, 25.45, 16);    
+}
+
+module ring_10_14()
+{
+    horseshoe(10, 22.25, 14);    
+}
+
+module ring_10_12()
+{
+    horseshoe(10, 19.05, 12);    
+}
+
+module ring_10_10()
+{
+    horseshoe(10, 15.85, 10);    
+}
+
+module ring_10_8()
+{
+    horseshoe(10, 12.65, 8);    
+}
+
+module ring_10_6()
+{
+    horseshoe(10, 9.45, 6);    
+}
+
+module ring_10_4()
+{
+    horseshoe(10, 6.37, 4);    
+}
+
+module ring_10_3()
+{
+    horseshoe(10, 4.78, 3);    
+}
+
+module ring_10_2()
+{
+    horseshoe(10, 3.185, 2);    
+}
 
 module square_nut_holder(width)
 {
@@ -397,9 +472,9 @@ module corner_in_in(count_x, count_y, count_z, width){
 //node_cut();
 //m4_square_nut_shell_inflated();
 //rectangular_plate(1,5,10);
-//half_barrel4(4, 32);
+ring_10_2();
 //translate ([-40,0,0]) mirror([0,0,1]) rectangular_plate(3,4,10);
-bracket1(5,1,2,10);
+//bracket2(5,1,2,10);
 //square_nut_holder(10);
 //node_and_node_section(10, 90);
 //node_lock90(10);
