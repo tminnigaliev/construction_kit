@@ -4,11 +4,9 @@ include $(wildcard *.deps)
 STLDIR = stls
 DEPDIR = deps
 
-_TARGETS=sq_nut_holder.stl
+_TARGETS = sq_nut_holder.stl ring_10_20.stl
 
 TARGETS = $(patsubst %,$(STLDIR)/%,$(_TARGETS))
-_DEPS = $(patsubst %,$(DEPDIR)/%,$(_TARGETS))
-DEPS = $(_DEPS:.stl=.deps)
 PNGS = $(TARGETS:.stl=.png)
 
 all: $(TARGETS) $(PNGS)
@@ -19,10 +17,11 @@ clean:
 	rm ./stls/*.png
 
 ./stls/%.stl: ./scad/%.scad
-	openscad -m make -o $@ -d $(DEPS) $<
-#openscad -m make -o $@ -d $@.deps $<
+	openscad -m make --imgsize=1024,768 --projection=ortho --autocenter -o $@ -d deps/$(notdir $@.deps) $<
 
 ./stls/%.png: ./scad/%.scad
-	openscad --render -o $@ -d $(DEPS) $<
-#	openscad --render -o $@ -d $@.deps $<
+	openscad --imgsize=1024,768 --projection=ortho --autocenter -o $@ -d deps/$(notdir $@.deps) $<
+#	openscad --render -o $@ -d deps/$(notdir $@.deps) $<
+#	openscad --render -o $@ -d deps/$(notdir $@.deps) $<
+#	openscad --render -o $@ $(basename $@).stl
 
