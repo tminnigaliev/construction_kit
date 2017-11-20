@@ -71,6 +71,15 @@ module node_lock90(width)
     }
 }
 
+module node_lock90_assim(width)
+{
+    angle=90;
+    difference(){
+        node(width);
+        translate([width/2+0.025,width/2-thickness_total,0.3]) rotate([0,-90,0]) cube([20,15,width+0.05]);
+    }
+}
+
 module node_corner90(width)
 {
     union()
@@ -80,3 +89,31 @@ module node_corner90(width)
     }
 }
 
+module node_corner90_assim(width)
+{
+    difference(){
+        union()
+        {
+            node_lock90_assim(width);
+            translate([0,width,0]) rotate([0,0,180]) node_plus(width);
+        }
+        translate([0,width/2,width/2]) rotate([-90,0,0]) node_minus(width);
+    }
+}
+
+module node_corner90_assim1(width)
+{
+    difference(){
+        union()
+        {
+            node_lock90_assim(width);
+            translate([0,width,0]) rotate([0,0,180]) node_plus(width);
+        }
+        union(){
+            translate([0,width/2,width/2]) rotate([-90,0,0]) node_minus(width);
+            translate([0,width,0]) node_minus(width);
+        }
+    }
+}
+
+//node_corner90_assim(10);

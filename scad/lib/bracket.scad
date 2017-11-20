@@ -1,4 +1,5 @@
 include<settings.scad>
+include<rectangular_plate.scad>
 use<node.scad>
 
 module bracket1(count_x, count_y, count_z, width)
@@ -91,3 +92,4 @@ module bracket4(count_x, count_y, count_z, width)
     }
 }
 
+//bracket1(5,1,2,10);
